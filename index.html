@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PUSTAKA ROHANI DIGITAL • GKSBS Palmerah Jambi</title>
+  <link rel="icon" href="https://i.imgur.com/eMrVC1m.jpeg" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    header {
+      background: rgba(13, 71, 161, 0.95);
+      color: white;
+      padding: 10px 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      backdrop-filter: blur(10px);
+    }
+    .logo-container {
+      width: 70px; height: 70px;
+      border-radius: 50%; background: white;
+      display: flex; align-items: center; justify-content: center;
+      border: 3px solid #FFD700; box-shadow: 0 0 8px rgba(255,215,0,0.5);
+      overflow: hidden; cursor: pointer;
+    }
+    .logo { width: 60px; height: 60px; object-fit: contain; border-radius: 50%; border: 2px solid #dc3545; }
+    header div:not(.logo-container) { text-align: center; }
+    .header-title { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.4rem; color: white; }
+    .header-subtitle { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 0.95rem; color: #E3F2FD; margin-top: 4px; }
+    .header-credit { font-family: 'Poppins', sans-serif; font-style: italic; font-size: 0.8rem; color: #FFD700; margin-top: 2px; }
+
+    .reaction-buttons {
+      position: absolute; top: 10px; right: 16px;
+      display: flex; gap: 12px; font-size: 0.85rem; font-weight: bold;
+    }
+    .reaction-btn {
+      background: rgba(255,255,255,0.2); border: none; border-radius: 20px;
+      padding: 4px 10px; color: white; cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      font-family: 'Poppins', sans-serif; backdrop-filter: blur(5px);
+    }
+    .reaction-btn svg { width: 16px; height: 16px; }
+
+    .container {
+      max-width: 1200px; margin: 130px auto 0; padding: 0 16px;
+    }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .search-box { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    #categorySelect { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .book-card {
+      background: white; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .book-cover {
+      width: 100%; height: 200px; object-fit: contain;
+      background: #e2e8f0; display: flex; align-items: center; justify-content: center;
+      color: #64748b; font-size: 0.8rem; text-align: center; padding: 6px;
+    }
+    .book-info { padding: 12px; }
+    .book-title {
+      font-weight: 600; margin-bottom: 4px; font-size: 0.95rem; color: #0f172a;
+      -webkit-user-select: text; -moz-user-select: text; user-select: text;
+    }
+    .book-category { font-size: 0.75rem; color: #475569; margin-bottom: 6px; }
+    .book-desc {
+      font-size: 0.7rem; color: #64748b; margin-bottom: 8px; line-height: 1.4;
+    }
+    .read-btn {
+      width: 100%; padding: 8px; background: #0d47a1; color: white;
+      border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
+    }
+
+    #pdfModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 10000;
+    }
+    #pdfFrame {
+      width: 100%; height: 100%; border: none;
+    }
+
+    #homeIconContainer {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 10001;
+      width: 40px;
+      height: 40px;
+      transform: scale(1);
+      transform-origin: top left;
+    }
+    #homeIconBtn {
+      width: 100%; height: 100%; background: transparent; border: none; cursor: pointer;
+    }
+    .home-icon-fixed {
+      width: 28px;
+      height: 28px;
+      fill: #ff4d4d;
+    }
+
+    .update-note {
+      position: fixed; bottom: 70px; left: 16px;
+      font-size: 0.85rem; color: #ff0000; font-weight: 600;
+      font-family: 'Poppins', sans-serif; z-index: 900;
+      background: rgba(255, 255, 255, 0.9); padding: 4px 10px;
+      border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      text-align: center; padding: 24px 16px; color: #475569; font-size: 0.85rem;
+      margin-top: 32px; background: #f1f5f9; border-top: 1px solid #e2e8f0;
+    }
+    .footer-logo {
+      width: 50px; height: 50px; border-radius: 50%; object-fit: contain;
+      margin-bottom: 12px; border: 2px solid #cbd5e1;
+    }
+    .footer-quote {
+      font-style: italic; margin: 12px 0; color: #0d47a1;
+      max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .book-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .book-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;" ondragstart="return false;">
+
+<header id="mainHeader">
+  <div class="logo-container" onclick="window.location.reload()">
+    <img src="https://i.imgur.com/eMrVC1m.jpeg" alt="Logo GKSBS" class="logo">
+  </div>
+  <div>
+    <div class="header-title">PUSTAKA ROHANI DIGITAL</div>
+    <div class="header-subtitle">Pustaka Rohani ini disediakan untuk memperlengkapi Jemaat GKSBS Palmerah Jambi dalam pertumbuhan iman dan pelayanan.</div>
+    <div class="header-credit">Dirancang dan dikembangkan oleh Komisi PWG GKSBS Palmerah Jambi @2025</div>
+  </div>
+  <div class="reaction-buttons">
+    <button class="reaction-btn" onclick="addReaction('like')" title="Suka">
+      <svg viewBox="0 0 24 24"><path fill="white" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+      <span id="likeCount">0</span>
+    </button>
+    <button class="reaction-btn" onclick="addReaction('love')" title="Mengasihi">
+      <svg viewBox="0 0 24 24"><path fill="white" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span id="loveCount">0</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="controls">
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Cari judul buku...">
+    <select id="categorySelect">
+      <option value="all">Semua Kategori</option>
+      <option value="Teologi Sistematis & Doktrin">Teologi Sistematis & Doktrin</option>
+      <option value="Studi Alkitab & Penafsiran">Studi Alkitab & Penafsiran</option>
+      <option value="Apologetika Kristen">Apologetika Kristen</option>
+      <option value="Kehidupan Rohani & Spiritualitas">Kehidupan Rohani & Spiritualitas</option>
+      <option value="Sejarah & Eklesiologi">Sejarah & Eklesiologi</option>
+      <option value="Etika & Pengajaran Kristiani">Etika & Pengajaran Kristiani</option>
+      <option value="Eschatologi">Eschatologi</option>
+      <option value="Fiksi & Inspiratif">Fiksi & Inspiratif</option>
+      <option value="Topik Khusus">Topik Khusus</option>
+    </select>
+  </div>
+  <div id="bookList" class="book-grid"></div>
+</div>
+
+<div class="update-note">📖 Tunggu update buku baru!</div>
+
+<footer>
+  <img src="https://i.imgur.com/eMrVC1m.jpeg" alt="Logo GKSBS" class="footer-logo">
+  <div class="footer-quote">
+    "Janganlah kita jemu-jemu berbuat baik, karena apabila sudah datang waktunya, kita akan menuai, jika kita tidak menjadi lemah." — Galatia 6:9
+  </div>
+  <p>Pustaka Rohani ini disediakan untuk memperlengkapi Jemaat GKSBS Palmerah Jambi dalam pertumbuhan iman dan pelayanan.</p>
+  <p style="margin-top: 14px; font-size: 0.9rem; color: #64748b;">&copy; 2025 GKSBS Palmerah Jambi – Pelayanan Digital</p>
+</footer>
+
+<div id="pdfModal">
+  <div id="homeIconContainer">
+    <button id="homeIconBtn" title="Kembali ke Halaman Utama">
+      <svg class="home-icon-fixed" viewBox="0 0 24 24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </button>
+  </div>
+  <iframe id="pdfFrame" title="Baca Buku Rohani" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+</div>
+
+<script>
+// ✅ DATA BUKU LENGKAP SESUAI daftar pustaka.xlsx (52 BUKU, TANPA DUPLIKAT)
+const books = [
+  { title: "Aku Dia dan Sabdanya", category: "Teologi Sistematis & Doktrin", pdfId: "1Z7r_2ZAiTN2ZdlrQEKqIyWSoe7hA_uRH", coverId: "1Z7r_2ZAiTN2ZdlrQEKqIyWSoe7hA_uRH", desc: "Merenungkan relasi pribadi dengan Kristus melalui Firman Tuhan." },
+  { title: "Amanat Besar", category: "Sejarah & Eklesiologi", pdfId: "1oXYc57sEDWW1uaxBZJ0cHgkKcXVBhosY", coverId: "1n9pvAKb3lZK5L5-NOdb723jxrucB2Ovi", desc: "Menekankan panggilan gereja untuk menjadikan semua bangsa murid." },
+  { title: "Angelology", category: "Teologi Sistematis & Doktrin", pdfId: "1IG2MIXD-yKfy07C15YoP3thZH2RjQzj7", coverId: "1a9P_0__i0g8I6O-5ePxNJzOBImWTtfqP", desc: "Studi tentang malaikat, peran, dan tempat mereka dalam rencana Allah." },
+  { title: "Anugrah Cuma Cuma", category: "Kehidupan Rohani & Spiritualitas", pdfId: "1liuKgzu6t_jUvpt2MKDB-iP4eD-kmeZq", coverId: "15vOdu2ElWN_A4OP76Oe9txfjEScnpXEg", desc: "Mengingatkan bahwa keselamatan adalah anugerah, bukan hasil usaha." },
+  { title: "Apa itu Gereja", category: "Sejarah & Eklesiologi", pdfId: "1blIvq17hUpKUpnaVqvRNq7QmGvk6SV8T", coverId: "1oHo6orXs0KhHryaauZQatXQvCCTQ6ibK", desc: "Menjelaskan esensi, tujuan, dan identitas gereja sebagai tubuh Kristus." },
+  { title: "Tak Kenal Menyerah", category: "Kehidupan Rohani & Spiritualitas", pdfId: "1MxYb_fg2vassq09DpTt12u3MQVfj42EX", coverId: "1U0CI07wXgc76k0hCZbL8hv2btxn1geEd", desc: "Kesaksian iman dalam pergumulan yang tak pernah menyerah kepada keadaan." },
+  { title: "Belajar dari kehidupan Gereja Awal", category: "Sejarah & Eklesiologi", pdfId: "1ppt3O4tZYGpPnmybO__HNmJMIzMoAIQD", coverId: "1tQmkXBXKVpM_JNVqOIDtHBq8zjp6Sy5p", desc: "Meneladani komunitas jemaat mula-mula dalam persekutuan dan pelayanan." },
+  { title: "Benang Emas dalam Alkitabku", category: "Studi Alkitab & Penafsiran", pdfId: "1MAIYrEt6oNzhcSsdB79dLh5_0fc2KMMa", coverId: "170XPQ7bWmZEzFR7yjpTRu-y7EKXLNkVW", desc: "Menelusuri tema keselamatan sepanjang Perjanjian Lama dan Baru." },
+  { title: "Benar oleh Iman", category: "Teologi Sistematis & Doktrin", pdfId: "19vlvt0M-90EXY0UE79jzvzAeqJ8fTP9B", coverId: "1k9iqUcD2v3dcoafM8fPCCYWODrZOsxdK", desc: "Menjelaskan ajaran pembenaran oleh iman sejati dalam perspektif Alkitab." },
+  { title: "Berjaga jaga dalam doa", category: "Kehidupan Rohani & Spiritualitas", pdfId: "105mtymVkUD9NXGPZ07cuNEFVSDNNJ8EU", coverId: "1GttWevzSGwmdGJ02gWw35a3C2Cr3rooY", desc: "Mengajak jemaat untuk hidup dalam kewaspadaan rohani melalui doa." },
+  { title: "Buku- Christian Prince -The deception of Allah", category: "Apologetika Kristen", pdfId: "10eyRdWxBWkfPU6tjzvZLT7l-byPWTTRb", coverId: "1pAPcrwqQUbksPwhM7_n7tRBLwK5UzUn8", desc: "Menjawab klaim Islam tentang Allah dan menunjukkan keunikan Allah dalam Kristus." },
+  { title: "Kristologi yang tak pernah mati", category: "Teologi Sistematis & Doktrin", pdfId: "1864SHePFHq_s7FhMje7VFaVTJVMLMbSn", coverId: "1hnDXJaE1d-Tl6DKgLTuKgX3LbY1qDscB", desc: "Menegaskan keilahian, kemanusiaan, dan karya Kristus yang abadi." },
+  { title: "Carilah Cahaya Kebenaran I", category: "Studi Alkitab & Penafsiran", pdfId: "1PNVllSbIO5N5R4lcwsvG8HHFGwY2UFqu", coverId: "1YxIg9ryxpRRxt02mHX_204VPkerD0Wbp", desc: "Bantuan studi Alkitab untuk memahami kebenaran firman secara kontekstual." },
+  { title: "Carilah Cahaya Kebenaran II", category: "Studi Alkitab & Penafsiran", pdfId: "1OQr4P_ixrzWkDutyXjqrQkPyW5VGfsbu", coverId: "1BuiuxaPgYRyU8ulMtEoer6tlPMjOQi6w", desc: "Lanjutan dari seri studi Alkitab untuk menghindari penafsiran sesat." },
+  { title: "Doktrin-doktrin Alkitab", category: "Teologi Sistematis & Doktrin", pdfId: "1Kz4qbOa2DokjJd7fHy3EA4_zTNIAuma6", coverId: "1W_PSwCs2Con3MioyXEFKRusVBIDobeCJ", desc: "Penjabaran menyeluruh tentang doktrin-doktrin utama iman Kristen." },
+  { title: "Soteriologi-Doktrin Keselamatan", category: "Teologi Sistematis & Doktrin", pdfId: "1r2KW_2hPCGg8lNDEuVNvET4C9zyoZvQb", coverId: "1EBtnM21furdga7nxrkvUcssXK4bX_Q3N", desc: "Mengupas doktrin keselamatan: anugerah, iman, pembenaran, dan pengudusan." },
+  { title: "Ecclesiology-part one", category: "Sejarah & Eklesiologi", pdfId: "1QkzKxkROEUU1trl-EW32sZol15pK2mmU", coverId: "1fVpB-XUnxJ9ndnFNHfG7nbeak9mfLe9c", desc: "Pengantar teologis tentang doktrin gereja." },
+  { title: "Eklesiologi GKSBS", category: "Sejarah & Eklesiologi", pdfId: "1VS3DGu6T8MkFySFjH7hMixrygQrMJCuh", coverId: "13p0rngPGQEDwY24zmU8jjyxkD9dev_QY", desc: "Pemahaman gereja menurut konteks GKSBS dan tradisi reformasi." },
+  { title: "Hamartiologi - Luginbill", category: "Teologi Sistematis & Doktrin", pdfId: "1FGaixkvWV1k5dLM_n7B0nxGHX8L-4aiL", coverId: "1YfWCvXO_1IJFoOVU6tJkOhHvPgs_-OdK", desc: "Studi mendalam tentang dosa, asal-usul, akibat, dan pemulihannya dalam Kristus." },
+  { title: "Hidup Sejati", category: "Kehidupan Rohani & Spiritualitas", pdfId: "19Q83vqnPztYDAMh_GWQuXIPUcHImrS0K", coverId: "1sZU8TOdVvHXZkwBNpzyWiRoV7Mf2RxET", desc: "Menelusuri makna hidup autentik dalam terang Firman dan panggilan ilahi." },
+  { title: "Sang Bintang pagi (Lucifer)", category: "Eschatologi", pdfId: "1hYyHqVbN6jQYDQJt_TQP3c-yQHJmZSwW", coverId: "1oTBFOhfGXX00aOjZ9XEfZm3Q6wReidXQ", desc: "Mengungkap asal-usul Iblis, pemberontakannya, dan kehancurannya dalam rencana Allah." },
+  { title: "Injil non Kanonik", category: "Studi Alkitab & Penafsiran", pdfId: "1_yVLz8PopAk94grnO3Q4DmORK8PnWfHK", coverId: "1Zt11XFwzS3KiUd1-qKWZ2EsfCc0xo8lr", desc: "Analisis kritis terhadap injil-injil apokrif dan perbandingannya dengan Injil kanonik." },
+  { title: "Jadikan semua bangsa murid-KU", category: "Sejarah & Eklesiologi", pdfId: "1CJ9E0t5eUqKyFo8e9TWOvZkh_XKiT_HS", coverId: "1ZGSdo6ijaDFyaoCyBVCgBlWX3139fHAg", desc: "Penjabaran praktis tentang misi global dan tanggung jawab jemaat lokal." },
+  { title: "Katekismus Heidelberg", category: "Teologi Sistematis & Doktrin", pdfId: "1nlItSeqRK3zmGQoEUhE1GmbfnFf5qP3s", coverId: "1nvpz6CBqVWApaWx2Z3N1gYmjxiY56bdw", desc: "Salah satu pengakuan iman Reformed paling berpengaruh sepanjang sejarah." },
+  { title: "Lima gadis Bijaksana-Lima gadis bodoh", category: "Etika & Pengajaran Kristiani", pdfId: "1VT07k7f75iZbzGPgsF3f5HhMrXksbnxB", coverId: "1wWNXwbaW7h9I5PaPGVmueGBtanLbpK4q", desc: "Renungan tentang kesiapsiagaan rohani dalam menantikan kedatangan Tuhan." },
+  { title: "Mati adalah Keuntungan", category: "Kehidupan Rohani & Spiritualitas", pdfId: "11wYh1BfvSvKuXd87OZGcRFUIR7PGpRDz", coverId: "1Ivg8p5hLogq2rmqUFBfxd2JIYENCK811", desc: "Menghadirkan perspektif Paulus tentang kematian sebagai jalan menuju Kristus." },
+  { title: "Memandang Perspektif", category: "Kehidupan Rohani & Spiritualitas", pdfId: "1c1_SPp-tytgNEJqWIcbCQcVSnRxewxIi", coverId: "1kzuibcAyvlRK4ytJsP7ixFpNW2D15BXp", desc: "Mengajak pembaca melihat hidup dari sudut pandang kekekalan dan kehendak Tuhan." },
+  { title: "Menemukan Kebahagiaan", category: "Kehidupan Rohani & Spiritualitas", pdfId: "1eiz7staTuR22_NeePtvXvFRqZfp9fdtN", coverId: "1GDPYNjw63wXH9DqWqYBJCxzMZb4iP7pX", desc: "Menunjukkan sumber kebahagiaan sejati dalam Kristus, bukan dunia." },
+  { title: "Mengapa orang Kristen butuh kesabaran", category: "Kehidupan Rohani & Spiritualitas", pdfId: "18wN9zJPWT3WT90K90_coa3tlfWX_nhYz", coverId: "1tpoUeJT_KdYLyKSQSgFJW574ZeVt2M6i", desc: "Menjelaskan nilai kesabaran dalam ujian iman dan proses pemuridan." },
+  { title: "Menjawab 156 Kontradiksi Alkitab Perjanjian Baru", category: "Studi Alkitab & Penafsiran", pdfId: "1qpmHTcYFnzJYwcie4crklTIztJiR3MTi", coverId: "13r49T0uCXTrCte-T9aDMSGrvcNwdANGE", desc: "Membela keandalan Alkitab dengan menjawab tuduhan kontradiksi di PB." },
+  { title: "Menjawab 111 Kontradiksi Alkitab Perjanjian Lama", category: "Studi Alkitab & Penafsiran", pdfId: "1Tzqxmx0MDw_GYfTIPLsXTde2gxx5hEv6", coverId: "119QHWow5IDxXgIhnjQFA3P3LOgBt-IK9", desc: "Menjelaskan kesatuan dan kebenaran Perjanjian Lama secara historis dan teologis." },
+  { title: "Pelajaran dari Kehidupan 12 Murid", category: "Etika & Pengajaran Kristiani", pdfId: "1YqSDkU9Kv1szd3y9c4ZDTqgZ5U4aqDyM", coverId: "1fgvRosCBFC0mv01jdfgw77tTzscKSeWP", desc: "Belajar dari kelemahan dan pertumbuhan iman para murid Yesus." },
+  { title: "Perempuan dengan sebuah Alkitab", category: "Etika & Pengajaran Kristiani", pdfId: "15fM48geka8MsDaxDRgPNKQEcRO78Gk8x", coverId: "19p38E7imt_yFMG5AEOw0eAMrZ7ugsNJa", desc: "Menginspirasi perempuan Kristen untuk hidup dalam kebenaran Firman." },
+  { title: "Singa Betina Bangkit", category: "Fiksi & Inspiratif", pdfId: "1QX8rB0LWGO6S3gjpXnIgJLSp2VR3CL-P", coverId: "1_os1hUUNMYXtfBuN3vnkgd_Hzw5qmBMe", desc: "Kisah fiksi rohani tentang keberanian dan iman perempuan dalam tantangan zaman." },
+  { title: "PPAG (Pokok-Pokok Ajaran Gereja) GKSBS", category: "Teologi Sistematis & Doktrin", pdfId: "18k3eqd458UqckJ_Ou7j2yQ7zSJhpHf7x", coverId: "1fqnixXHfsxBTKQyGJVZfjtZvTfI94OxQ", desc: "Ringkasan ajaran resmi GKSBS sebagai pegangan iman jemaat." },
+  { title: "Putri Tukang Arloji", category: "Fiksi & Inspiratif", pdfId: "1KcDSJTmE2FRxlcJLt_Q-cxRbYrEpU176", coverId: "1HFjVaC1h0EXfl49r1QGB2pFAPdII1EgQ", desc: "Novel rohani yang menggambarkan keteguhan iman dalam pergumulan hidup." },
+  { title: "Umpan Iblis", category: "Topik Khusus", pdfId: "1MCtz8bI4vd_XelpRaNa56zvw7dmmOKl4", coverId: "102BvPNo6vd_r2nI9zGTeCTvJoCk7VY-X", desc: "Mengungkap tipu daya Iblis dalam menyebabkan kejatuhan rohani." },
+  { title: "Sang Penolong", category: "Teologi Sistematis & Doktrin", pdfId: "1H4f-QvkrTyhokyO_kToUUUmQ4EZN0i28", coverId: "13ub5BIvuIa8L--vfADbcugiOI8uHvCN_", desc: "Menegaskan peran Roh Kudus sebagai Penolong yang dijanjikan Yesus." },
+  { title: "Spiritualitas Kristen dan & Apologetika Kristen", category: "Apologetika Kristen", pdfId: "186wRHD899QUb7GmW1rpWtQfOd2rtC1ws", coverId: "1aRqOQilKcgnKJ9vqQCOP3lGVyJbSJFBm", desc: "Menggabungkan kehidupan rohani dengan dasar rasional iman Kristen." },
+  { title: "Sejarah Gereja dari Masa Rasul", category: "Sejarah & Eklesiologi", pdfId: "1u7x_Pqn7cagbw4gv78rv8MznLBmWvpHd", coverId: "1xWOqB7fMaWqP4DCl5b7PLzeGFnw-KR9a", desc: "Ringkasan sejarah perkembangan gereja dari abad pertama hingga modern." },
+  { title: "Satu Satunya Penghiburan", category: "Kehidupan Rohani & Spiritualitas", pdfId: "1w8hoMHeyOPry-Jx8liHoy6_KhODbcMgw", coverId: "19HBXQZd0oVtk9HDnkk_ouUPFPjJHMHYq", desc: "Menawarkan pengharapan di tengah penderitaan berdasarkan janji Allah." },
+  { title: "Islam Akhri Jaman", category: "Apologetika Kristen", pdfId: "0B1AP8BZd8A9Mck5yLTN1cklhN3c", coverId: "1Ky1QfRK5tFlizxVXE3zdGnEYOYoqFEex", desc: "Menelaah peran Islam dalam nubuatan akhir zaman menurut perspektif Alkitab." },
+  { title: "Tudingan Salah  tentang Kristen", category: "Apologetika Kristen", pdfId: "0B1AP8BZd8A9MMTY1QUpWbFMxVmM", coverId: "1a-oIE2VWnxRwUUx_FQMycycMEOC7DIKK", desc: "Menanggapi tuduhan umum terhadap kekristenan secara Alkitabiah." },
+  { title: "101 Penjelasan Kontradiksi dalam Alkitab", category: "Studi Alkitab & Penafsiran", pdfId: "1L37TjKeuDnCDtBBylv85SXgJtbFPnX-G", coverId: "1Z2p3dNNqHADWVdu7riLL-236UwFJjvRI", desc: "Ringkasan praktis untuk menjawab pertanyaan umum tentang 'kontradiksi' Alkitab." },
+  { title: "Ucapan Bahagia", category: "Etika & Pengajaran Kristiani", pdfId: "1Z5lntObUnlpk9oWfGhMd_id6RySodaOv", coverId: "1f2Wt3WcMsC9qZVWGoUFNNI-sLYHmQ8pD", desc: "Penjabaran mendalam tentang Khotbah di Bukit (Matius 5) dan berkat rohani." },
+  { title: "Surga direbut dengan Kekerasan", category: "Kehidupan Rohani & Spiritualitas", pdfId: "11OFNX4Ovj6sLkZpv_eTyzg0RD8D35yiJ", coverId: "1UoLeMNSYgkYGiK3o3ypOBcV2MPomGzdH", desc: "Menjelaskan semangat kerohanian yang gigih dalam mengejar kerajaan surga." },
+  { title: "Homiletika", category: "Etika & Pengajaran Kristiani", pdfId: "1vk5RiuGKstllmkolhIx_05I8VLg7lwzu", coverId: "1oEW7-OY6AAujk0yuWbyaCVSjVNWhVFFo", desc: "Panduan dasar berkhotbah yang berdasarkan Firman Tuhan." },
+  { title: "Teologi Perjanjian Vs Dispensasionalisme", category: "Teologi Sistematis & Doktrin", pdfId: "14rJxrA853CWvL_EyWQVoR9L1gv-CTVti", coverId: "17cWWiXT74Z7iuYY2wrNN-OsH8RkOIYFd", desc: "Perbandingan antara pendekatan Teologi Perjanjian dan Dispensasionalisme dalam penafsiran Alkitab." },
+  { title: "Buku Putih GKSBS", category: "Sejarah & Eklesiologi", pdfId: "1C54QIPiNRX_i83O2iYHJ936PiIRXYGUo", coverId: "1r6TNfppHZYkeNYXD9jaxQc_wBJE1j0vc", desc: "Dokumen resmi GKSBS tentang visi, misi, dan landasan pelayanan." },
+  { title: "Tafsir Wahtu - 1", category: "Studi Alkitab & Penafsiran", pdfId: "1mTJZXdben-o7wl8H9EI_8L6ccmnmPCws", coverId: "14f_hqukgXcvtMsSeqar4VIeemc8CTgbm", desc: "Penafsiran mendalam atas Kitab Wahyu pasal 1 dalam perspektif Alkitabiah." },
+  { title: "Berjalan Bersama", category: "Kehidupan Rohani & Spiritualitas", pdfId: "1QeT1iqsAf8qHK9G_ZWsBRmC-bIDxYjKW", coverId: "1IyixYH_dAT63x3aFB6_Tl3K9Gk7eGBGn", desc: "Renungan tentang persekutuan dengan Tuhan dalam perjalanan hidup setiap hari." }
+];
+
+function renderBooks(filteredBooks = books) {
+  const container = document.getElementById('bookList');
+  container.innerHTML = '';
+  filteredBooks.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    const coverUrl = book.coverId 
+      ? `https://drive.google.com/thumbnail?id=${book.coverId}&sz=w240-h200`
+      : 'https://via.placeholder.com/240x200/e2e8f0/64748b?text=No+Cover';
+    card.innerHTML = `
+      <img src="${coverUrl}" alt="Sampul: ${book.title}" class="book-cover">
+      <div class="book-info">
+        <div class="book-title">${book.title}</div>
+        <div class="book-category">${book.category}</div>
+        <div class="book-desc">${book.desc}</div>
+        ${book.pdfId 
+          ? `<button class="read-btn" onclick="openPdf('${book.pdfId}')">Baca Buku</button>` 
+          : `<button class="read-btn" disabled>Tidak Tersedia</button>`
+        }
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function openPdf(fileId) {
+  const pdfUrl = `https://drive.google.com/file/d/${fileId}/preview?usp=embed_pdf`;
+  document.getElementById('pdfFrame').src = pdfUrl;
+  document.getElementById('pdfModal').style.display = 'block';
+  adjustHomeIconForZoom();
+}
+
+function closePdf() {
+  document.getElementById('pdfModal').style.display = 'none';
+  document.getElementById('pdfFrame').src = '';
+}
+
+function adjustHomeIconForZoom() {
+  const container = document.getElementById('homeIconContainer');
+  if (window.visualViewport) {
+    const updateScale = () => {
+      const scale = 1 / window.visualViewport.scale;
+      container.style.transform = `scale(${scale})`;
+    };
+    updateScale();
+    window.visualViewport.addEventListener('resize', updateScale);
+    const modal = document.getElementById('pdfModal');
+    const observer = new MutationObserver(() => {
+      if (modal.style.display === 'none') {
+        window.visualViewport.removeEventListener('resize', updateScale);
+        observer.disconnect();
+      }
+    });
+    observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
+  }
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  const cat = document.getElementById('categorySelect').value;
+  renderBooks(books.filter(b => b.title.toLowerCase().includes(q) && (cat === 'all' || b.category === cat)));
+});
+document.getElementById('categorySelect').addEventListener('change', e => {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cat = e.target.value;
+  renderBooks(books.filter(b => b.title.toLowerCase().includes(q) && (cat === 'all' || b.category === cat)));
+});
+
+function addReaction(type) {
+  const key = type + 'Count';
+  let count = parseInt(localStorage.getItem(key)) || 0;
+  count++;
+  localStorage.setItem(key, count);
+  document.getElementById(key).textContent = count;
+  const btn = event.target.closest('.reaction-btn');
+  btn.style.transform = 'scale(1.1)';
+  setTimeout(() => btn.style.transform = 'scale(1)', 200);
+}
+
+document.getElementById('homeIconBtn').onclick = closePdf;
+renderBooks();
+document.getElementById('likeCount').textContent = localStorage.getItem('likeCount') || 0;
+document.getElementById('loveCount').textContent = localStorage.getItem('loveCount') || 0;
+</script>
+
+</body>
+</html>
